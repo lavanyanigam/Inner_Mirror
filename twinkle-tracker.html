@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Twinkle Tracker ✨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1a3e 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .neon-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            height: 500px;
+            border-radius: 50%;
+            background: rgba(10, 14, 39, 0.8);
+            border: 3px solid #00ffff;
+            box-shadow: 
+                0 0 20px #00ffff,
+                0 0 40px #00ffff,
+                inset 0 0 20px rgba(0, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            z-index: 1000;
+            animation: neonPulse 2s infinite alternate;
+            overflow-y: auto;
+        }
+
+        .neon-container.hidden {
+            display: none;
+        }
+
+        @keyframes neonPulse {
+            from {
+                box-shadow: 
+                    0 0 20px #00ffff,
+                    0 0 40px #00ffff,
+                    inset 0 0 20px rgba(0, 255, 255, 0.3);
+            }
+            to {
+                box-shadow: 
+                    0 0 30px #00ffff,
+                    0 0 60px #00ffff,
+                    inset 0 0 30px rgba(0, 255, 255, 0.5);
+            }
+        }
+
+        .neon-container h2 {
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #00ffff;
+            font-size: 12px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #00ffff;
+            font-size: 14px;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+
+        .input-group textarea {
+            resize: none;
+            height: 70px;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            box-shadow: 0 0 20px #00ffff;
+            border-color: #ff00ff;
+        }
+
+        .input-group input::placeholder,
+        .input-group textarea::placeholder {
+            color: rgba(0, 255, 255, 0.5);
+        }
+
+        /* Button container for better alignment */
+        .button-container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transition: all 0.3s;
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.8);
+        }
+
+        /* Smaller buttons for modal */
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 12px;
+        }
+
+        .star {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            z-index: 10;
+        }
+
+        .star:before {
+            content: '⭐';
+            font-size: 30px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 100, 0.8));
+        }
+
+        .star:hover {
+            transform: scale(1.3);
+        }
+
+        .shooting-star {
+            animation: shoot 2s ease-out forwards;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(1500px, -1500px) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 14, 39, 0.95);
+            border: 3px solid #ff00ff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 40px #ff00ff;
+            z-index: 2000;
+            display: none;
+            min-width: 400px;
+            max-width: 450px;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal h3 {
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff;
+            margin-bottom: 15px;
+        }
+
+        .modal p {
+            color: #00ffff;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons .btn {
+            flex: none;
+        }
+
+        .modal-buttons .btn:last-child {
+            grid-column: 1 / -1;
+        }
+
+        .add-wish-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .add-wish-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            font-size: 35px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            z-index: 2000;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .home-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .bg-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 3px white;
+            animation: twinkle 3s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+
+        .update-form {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(0, 255, 255, 0.3);
+            display: none;
+        }
+
+        .update-form.active {
+            display: block;
+        }
+
+        .update-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #00ffff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .update-form input:focus {
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .update-form .button-container {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-btn">🏠</a>
+
+
+    <div class="neon-container" id="neonContainer">
+        <h2>✨ Make a Wish ✨</h2>
+        <div class="input-group">
+            <label>Your Goal</label>
+            <textarea id="wishInput" placeholder="Enter your wish or goal..."></textarea>
+        </div>
+        <div class="input-group">
+            <label>Deadline Date</label>
+            <input type="date" id="deadlineInput">
+        </div>
+        <div class="input-group">
+            <label>Deadline Time</label>
+            <input type="time" id="timeInput">
+        </div>
+        <div class="button-container">
+            <button class="btn" onclick="saveWish()">💫 Save</button>
+            <button class="btn" onclick="closeNeonBox()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal" id="wishModal">
+        <h3>⭐ Your Wish</h3>
+        <p><strong>Goal:</strong> <span id="modalWish"></span></p>
+        <p><strong>Deadline:</strong> <span id="modalDeadline"></span></p>
+        <p><strong>Time:</strong> <span id="modalTime"></span></p>
+
+        <div class="update-form" id="updateForm">
+            <h3 style="font-size: 16px; margin-bottom: 10px;">Update Deadline</h3>
+            <input type="date" id="updateDate">
+            <input type="time" id="updateTime">
+            <div class="button-container">
+                <button class="btn btn-small" onclick="saveUpdatedDeadline()">💾 Save</button>
+                <button class="btn btn-small" onclick="cancelUpdate()">Cancel</button>
+            </div>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="btn btn-small" onclick="showUpdateForm()">📅 Update</button>
+            <button class="btn btn-small" onclick="markCompleted()">✓ Complete</button>
+            <button class="btn btn-small" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <button class="add-wish-btn" onclick="openNeonBox()">+</button>
+
+    <script>
+        let wishes = JSON.parse(localStorage.getItem('wishes')) || [];
+        let currentWishId = null;
+
+        function createBackgroundStars() {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'bg-star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(star);
+            }
+        }
+
+        function openNeonBox() {
+            document.getElementById('neonContainer').classList.remove('hidden');
+            document.getElementById('wishInput').value = '';
+            document.getElementById('deadlineInput').value = '';
+            document.getElementById('timeInput').value = '';
+        }
+
+        function closeNeonBox() {
+            document.getElementById('neonContainer').classList.add('hidden');
+        }
+
+        function saveWish() {
+            const wish = document.getElementById('wishInput').value;
+            const deadline = document.getElementById('deadlineInput').value;
+            const time = document.getElementById('timeInput').value;
+
+            if (!wish || !deadline || !time) {
+                alert('Please enter wish, deadline date, and time!');
+                return;
+            }
+
+            const wishData = {
+                id: Date.now(),
+                wish: wish,
+                deadline: deadline,
+                time: time,
+                x: Math.random() * (window.innerWidth - 50),
+                y: Math.random() * (window.innerHeight - 50)
+            };
+
+            wishes.push(wishData);
+            localStorage.setItem('wishes', JSON.stringify(wishes));
+            createStar(wishData);
+            closeNeonBox();
+        }
+
+        function createStar(wishData) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.id = 'star-' + wishData.id;
+            star.style.left = wishData.x + 'px';
+            star.style.top = wishData.y + 'px';
+            star.onclick = () => showWish(wishData.id);
+            document.body.appendChild(star);
+        }
+
+        function showWish(id) {
+            const wish = wishes.find(w => w.id === id);
+            if (wish) {
+                currentWishId = id;
+                document.getElementById('modalWish').textContent = wish.wish;
+                document.getElementById('modalDeadline').textContent = wish.deadline;
+                document.getElementById('modalTime').textContent = wish.time || 'Not set';
+                document.getElementById('updateForm').classList.remove('active');
+                document.getElementById('wishModal').classList.add('active');
+            }
+        }
+
+        function showUpdateForm() {
+            const wish = wishes.find(w => w.id === currentWishId);
+            if (wish) {
+                document.getElementById('updateDate').value = wish.deadline;
+                document.getElementById('updateTime').value = wish.time || '';
+                document.getElementById('updateForm').classList.add('active');
+            }
+        }
+
+        function cancelUpdate() {
+            document.getElementById('updateForm').classList.remove('active');
+        }
+
+        function saveUpdatedDeadline() {
+            const newDate = document.getElementById('updateDate').value;
+            const newTime = document.getElementById('updateTime').value;
+
+            if (!newDate || !newTime) {
+                alert('Please enter both date and time!');
+                return;
+            }
+
+            const wishIndex = wishes.findIndex(w => w.id === currentWishId);
+            if (wishIndex !== -1) {
+                wishes[wishIndex].deadline = newDate;
+                wishes[wishIndex].time = newTime;
+                localStorage.setItem('wishes', JSON.stringify(wishes));
+
+                document.getElementById('modalDeadline').textContent = newDate;
+                document.getElementById('modalTime').textContent = newTime;
+                document.getElementById('updateForm').classList.remove('active');
+
+                alert('✨ Deadline updated successfully!');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('wishModal').classList.remove('active');
+            document.getElementById('updateForm').classList.remove('active');
+            currentWishId = null;
+        }
+
+        function markCompleted() {
+            if (currentWishId) {
+                const starElement = document.getElementById('star-' + currentWishId);
+                if (starElement) {
+                    starElement.classList.add('shooting-star');
+                    setTimeout(() => {
+                        starElement.remove();
+                    }, 2000);
+                }
+
+                wishes = wishes.filter(w => w.id !== currentWishId);
+                localStorage.setItem('wishes', JSON.stringify(wishes));
+                closeModal();
+            }
+        }
+
+        function loadWishes() {
+            wishes.forEach(wish => createStar(wish));
+        }
+
+        createBackgroundStars();
+        loadWishes();
+        closeNeonBox();
+    </script>
+</body>
+</html>

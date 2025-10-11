@@ -1,0 +1,258 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silk – Interactive Generative Art</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+            cursor: crosshair;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(30, 30, 30, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            min-width: 250px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .controls h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: left;
+            color: #fff;
+            font-weight: 300;
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .color-dot {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .color-dot:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-dot.active {
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .slider-container {
+            margin-bottom: 25px;
+        }
+        
+        .slider-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .checkbox-container label {
+            font-size: 14px;
+            color: #ccc;
+            cursor: pointer;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <div class="controls">
+        <h3>Controls</h3>
+        
+        <div class="color-palette" id="colorPalette"></div>
+        
+        <div class="slider-container">
+            <label class="slider-label">Rotational Symmetry: <span id="symmetryValue">6</span></label>
+            <input type="range" class="slider" id="symmetry" min="1" max="20" value="6">
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="mirror" checked>
+            <label for="mirror">Mirror across center</label>
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="spiral" checked>
+            <label for="spiral">Spiral towards center</label>
+        </div>
+        
+        <div class="button-group">
+            <button id="clear">Clear</button>
+            <button id="save">Save</button>
+        </div>
+    </div>
+    
+    <div class="info">
+        Press SPACE to clear | Press Z to undo
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        
+        let isDrawing = false;
+        let symmetryLines = 6;
+        let mirrorEnabled = true;
+        let spiralEnabled = true;
+        let currentColor = { r: 255, g: 100, b: 200 };
+        let lastX = 0;
+        let lastY = 0;
+        let history = [];
+        
+        const colors = [
+            { r: 255, g: 100, b: 200 },
+            { r: 150, g: 100, b: 255 },
+            { r: 100, g: 150, b: 255 },
+            { r: 100, g: 255, b: 200 },
+            { r: 150, g: 255, b: 100 },
+            { r: 255, g: 200, b: 100 },
+            { r: 255, g: 130, b: 100 }
+        ];
+        
+        const colorPalette = document.getElementById('colorPalette');
+        colors.forEach((color, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'color-dot';
+            if (index === 0) dot.classList.add('active');
+            dot.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+            dot.addEventListener('click', () => {
+                document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                currentColor = color;
+            });
+            colorPalette.appendChild(dot);
+        });
+        
+        const symmetrySlider = document.getElementById('symmetry');
+        const mirrorCheckbox = document.getElementById('mirror');
+        const spiralCheckbox = document.getElementById('spiral');
+        const clearBtn = document.getElementById('clear');
+        const saveBtn = document.getElementById('save');
+        
+        symmetrySlider.addEventListener('input', (e) => {
+            symmetryLines = parseInt(e.target.value);
+            document.getElementById('symmetryValue').textContent = symmetryLines;
+        });
+        
+        mirrorCheckbox.addEventListener('change', (e) => {
+            mirrorEnabled = e -->

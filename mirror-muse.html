@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Mirror Muse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        
+        canvas {
+            display: block;
+            cursor: crosshair;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            transition: background 0.5s ease;
+        }
+        
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            font-size: 35px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            z-index: 2000;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .home-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(30, 30, 30, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            min-width: 250px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .controls h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: left;
+            color: #fff;
+            font-weight: 300;
+        }
+        
+        .mood-section {
+            margin-bottom: 25px;
+        }
+        
+        .mood-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .mood-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .mood-btn {
+            padding: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            text-align: center;
+        }
+        
+        .mood-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+        
+        .mood-btn.active {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .color-dot {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .color-dot:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-dot.active {
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        .slider-container {
+            margin-bottom: 25px;
+        }
+        
+        .slider-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        .checkbox-container label {
+            font-size: 14px;
+            color: #ccc;
+            cursor: pointer;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-btn">🏠</a>
+    
+    <canvas id="canvas"></canvas>
+    
+    <div class="controls">
+        <h3>🎨 Mirror Muse Controls</h3>
+        
+        <div class="mood-section">
+            <label class="mood-label">🌈 Choose Your Mood</label>
+            <div class="mood-buttons">
+                <div class="mood-btn active" data-mood="calm">😌 Calm</div>
+                <div class="mood-btn" data-mood="happy">😊 Happy</div>
+                <div class="mood-btn" data-mood="energetic">⚡ Energetic</div>
+                <div class="mood-btn" data-mood="dreamy">💭 Dreamy</div>
+                <div class="mood-btn" data-mood="romantic">💕 Romantic</div>
+                <div class="mood-btn" data-mood="creative">🎨 Creative</div>
+            </div>
+        </div>
+        
+        <div class="color-palette" id="colorPalette"></div>
+        
+        <div class="slider-container">
+            <label class="slider-label">Rotational Symmetry: <span id="symmetryValue">6</span></label>
+            <input type="range" class="slider" id="symmetry" min="1" max="20" value="6">
+        </div>
+        
+        <div class="slider-container">
+            <label class="slider-label">Pen Thickness: <span id="thicknessValue">4</span></label>
+            <input type="range" class="slider" id="thickness" min="1" max="10" value="4">
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="mirror" checked>
+            <label for="mirror">Mirror across center</label>
+        </div>
+        
+        <div class="checkbox-container">
+            <input type="checkbox" id="spiral" checked>
+            <label for="spiral">Spiral towards center</label>
+        </div>
+        
+        <div class="button-group">
+            <button id="clear">Clear</button>
+            <button id="save">Save</button>
+        </div>
+    </div>
+    
+    <div class="info">
+        Press SPACE to clear | Press Z to undo
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const moodBackgrounds = {
+            calm: 'radial-gradient(circle at center, #1a237e 0%, #0d1b2a 100%)',
+            happy: 'radial-gradient(circle at center, #ffd700 0%, #ff8c00 100%)',
+            energetic: 'radial-gradient(circle at center, #ff1744 0%, #d500f9 100%)',
+            dreamy: 'radial-gradient(circle at center, #7b1fa2 0%, #1a237e 100%)',
+            romantic: 'radial-gradient(circle at center, #880e4f 0%, #4a148c 100%)',
+            creative: 'radial-gradient(circle at center, #00bcd4 0%, #673ab7 100%)'
+        };
+        
+        let currentMood = 'calm';
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            updateBackground();
+        }
+        resizeCanvas();
+        
+        let isDrawing = false;
+        let symmetryLines = 6;
+        let mirrorEnabled = true;
+        let spiralEnabled = true;
+        let penThickness = 4;
+        let currentColor = { r: 255, g: 100, b: 200 };
+        let lastX = 0;
+        let lastY = 0;
+        let history = [];
+        
+        const colors = [
+            { r: 255, g: 100, b: 200 },
+            { r: 150, g: 100, b: 255 },
+            { r: 100, g: 150, b: 255 },
+            { r: 100, g: 255, b: 200 },
+            { r: 150, g: 255, b: 100 },
+            { r: 255, g: 200, b: 100 },
+            { r: 255, g: 130, b: 100 }
+        ];
+        
+        const colorPalette = document.getElementById('colorPalette');
+        colors.forEach((color, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'color-dot';
+            if (index === 0) dot.classList.add('active');
+            dot.style.background = `rgb(${color.r}, ${color.g}, ${color.b})`;
+            dot.addEventListener('click', () => {
+                document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+                dot.classList.add('active');
+                currentColor = color;
+            });
+            colorPalette.appendChild(dot);
+        });
+        
+        const moodButtons = document.querySelectorAll('.mood-btn');
+        moodButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                moodButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMood = btn.dataset.mood;
+                updateBackground();
+            });
+        });
+        
+        function updateBackground() {
+            canvas.style.background = moodBackgrounds[currentMood];
+        }
+        
+        const symmetrySlider = document.getElementById('symmetry');
+        const thicknessSlider = document.getElementById('thickness');
+        const mirrorCheckbox = document.getElementById('mirror');
+        const spiralCheckbox = document.getElementById('spiral');
+        const clearBtn = document.getElementById('clear');
+        const saveBtn = document.getElementById('save');
+        
+        symmetrySlider.addEventListener('input', (e) => {
+            symmetryLines = parseInt(e.target.value);
+            document.getElementById('symmetryValue').textContent = symmetryLines;
+        });
+        
+        thicknessSlider.addEventListener('input', (e) => {
+            penThickness = parseInt(e.target.value);
+            document.getElementById('thicknessValue').textContent = penThickness;
+        });
+        
+        mirrorCheckbox.addEventListener('change', (e) => {
+            mirrorEnabled = e.target.checked;
+        });
+        
+        spiralCheckbox.addEventListener('change', (e) => {
+            spiralEnabled = e.target.checked;
+        });
+        
+        clearBtn.addEventListener('click', clearCanvas);
+        saveBtn.addEventListener('click', saveImage);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                clearCanvas();
+            } else if (e.code === 'KeyZ') {
+                undo();
+            }
+        });
+        
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            startDrawing({ clientX: touch.clientX, clientY: touch.clientY });
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            draw({ clientX: touch.clientX, clientY: touch.clientY });
+        });
+        
+        canvas.addEventListener('touchend', stopDrawing);
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            saveHistory();
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const x = e.clientX;
+            const y = e.clientY;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            for (let i = 0; i < symmetryLines; i++) {
+                const angle = (Math.PI * 2 * i) / symmetryLines;
+                
+                let drawX = x - centerX;
+                let drawY = y - centerY;
+                let lastDrawX = lastX - centerX;
+                let lastDrawY = lastY - centerY;
+                
+                if (spiralEnabled) {
+                    const distance = Math.sqrt(drawX * drawX + drawY * drawY);
+                    const spiralAngle = distance * 0.01;
+                    const cos = Math.cos(spiralAngle);
+                    const sin = Math.sin(spiralAngle);
+                    
+                    let tempX = drawX;
+                    drawX = drawX * cos - drawY * sin;
+                    drawY = tempX * sin + drawY * cos;
+                    
+                    let tempLastX = lastDrawX;
+                    lastDrawX = lastDrawX * cos - lastDrawY * sin;
+                    lastDrawY = tempLastX * sin + lastDrawY * cos;
+                }
+                
+                const cos = Math.cos(angle);
+                const sin = Math.sin(angle);
+                
+                const rotatedX = centerX + (drawX * cos - drawY * sin);
+                const rotatedY = centerY + (drawX * sin + drawY * cos);
+                const rotatedLastX = centerX + (lastDrawX * cos - lastDrawY * sin);
+                const rotatedLastY = centerY + (lastDrawX * sin + lastDrawY * cos);
+                
+                drawLine(rotatedLastX, rotatedLastY, rotatedX, rotatedY);
+                
+                if (mirrorEnabled) {
+                    const mirrorRotatedX = centerX + (drawX * cos + drawY * sin);
+                    const mirrorRotatedY = centerY + (-drawX * sin + drawY * cos);
+                    const mirrorRotatedLastX = centerX + (lastDrawX * cos + lastDrawY * sin);
+                    const mirrorRotatedLastY = centerY + (-lastDrawX * sin + lastDrawY * cos);
+                    
+                    drawLine(mirrorRotatedLastX, mirrorRotatedLastY, mirrorRotatedX, mirrorRotatedY);
+                }
+            }
+            
+            lastX = x;
+            lastY = y;
+        }
+        
+        function drawLine(x1, y1, x2, y2) {
+            const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+            const alpha = 0.4;
+            gradient.addColorStop(0, `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${alpha})`);
+            gradient.addColorStop(1, `rgba(${currentColor.r}, ${currentColor.g}, ${currentColor.b}, ${alpha * 0.6})`);
+            
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = penThickness;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+        
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            history = [];
+        }
+        
+        function saveHistory() {
+            if (history.length > 20) history.shift();
+            history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+        }
+        
+        function undo() {
+            if (history.length > 0) {
+                history.pop();
+                if (history.length > 0) {
+                    ctx.putImageData(history[history.length - 1], 0, 0);
+                } else {
+                    clearCanvas();
+                }
+            }
+        }
+        
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = 'mirror-muse-art.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        updateBackground();
+    </script>
+</body>
+</html>

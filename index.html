@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ Inner Mirror ✨</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 25%, #ffecd2 50%, #ff9a9e 75%, #fad0c4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 100px;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .cloud:nth-child(1) {
+            width: 100px;
+            height: 40px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .cloud:nth-child(2) {
+            width: 150px;
+            height: 50px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 5s;
+        }
+        
+        .cloud:nth-child(3) {
+            width: 120px;
+            height: 45px;
+            top: 40%;
+            left: 70%;
+            animation-delay: 10s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .star {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 20px;
+            animation: twinkle 3s infinite;
+            will-change: opacity;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .star:nth-child(even) {
+            animation: twinkle 2.5s infinite;
+        }
+        
+        .star:nth-child(3n) {
+            animation: twinkle 3.5s infinite;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 60px 50px;
+            border-radius: 40px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            z-index: 10;
+            animation: fadeIn 1s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 55px;
+            color: #fff;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        
+    .subtitle {
+    font-size: 18px;
+    color: #001f3f;
+    margin-bottom: 50px;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+        
+        .button-container {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-button {
+            text-decoration: none;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 25px 45px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-button:nth-child(2) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+        }
+        
+        .nav-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.6);
+        }
+        
+        .nav-button:nth-child(2):hover {
+            box-shadow: 0 15px 40px rgba(79, 172, 254, 0.6);
+        }
+        
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .nav-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .emoji {
+            font-size: 30px;
+            margin-right: 10px;
+        }
+        
+        /* Hearts floating UP (from bottom to top) */
+        .heart-up {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.7);
+            font-size: 25px;
+            animation: floatHeartUp 15s infinite ease-in-out;
+            will-change: transform, opacity;
+        }
+        
+        @keyframes floatHeartUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Hearts floating DOWN (from top to bottom) */
+        .heart-down {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.7);
+            font-size: 25px;
+            animation: floatHeartDown 15s infinite ease-in-out;
+            will-change: transform, opacity;
+        }
+        
+        @keyframes floatHeartDown {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100vh) rotate(-360deg); opacity: 0; }
+        }
+        
+        .heart-up:nth-child(even), .heart-down:nth-child(even) {
+            animation-duration: 18s;
+        }
+        
+        .heart-up:nth-child(3n), .heart-down:nth-child(3n) {
+            animation-duration: 12s;
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
+    
+    <div class="star" style="top: 8%; left: 12%;">✨</div>
+    <div class="star" style="top: 22%; right: 18%; animation-delay: 1s;">⭐</div>
+    <div class="star" style="bottom: 35%; left: 28%; animation-delay: 2s;">✨</div>
+    <div class="star" style="top: 65%; right: 8%; animation-delay: 1.5s;">⭐</div>
+    <div class="star" style="top: 18%; right: 45%; animation-delay: 0.5s;">💫</div>
+    <div class="star" style="top: 52%; left: 5%; animation-delay: 2.5s;">🌟</div>
+    <div class="star" style="bottom: 15%; right: 38%; animation-delay: 1.2s;">✨</div>
+    <div class="star" style="top: 42%; right: 22%; animation-delay: 3s;">⭐</div>
+    <div class="star" style="bottom: 25%; left: 62%; animation-delay: 0.8s;">💫</div>
+    <div class="star" style="top: 75%; left: 85%; animation-delay: 2.8s;">🌟</div>
+    <div class="star" style="top: 12%; left: 68%; animation-delay: 1.8s;">✨</div>
+    <div class="star" style="bottom: 48%; right: 55%; animation-delay: 2.2s;">⭐</div>
+    
+    <!-- Hearts floating UP (10 hearts from bottom to top) -->
+    <div class="heart-up" style="left: 5%; animation-delay: 0s;">💗</div>
+    <div class="heart-up" style="left: 15%; animation-delay: 2s;">💕</div>
+    <div class="heart-up" style="left: 25%; animation-delay: 4s;">💖</div>
+    <div class="heart-up" style="left: 35%; animation-delay: 6s;">💝</div>
+    <div class="heart-up" style="left: 45%; animation-delay: 8s;">💘</div>
+    <div class="heart-up" style="left: 55%; animation-delay: 10s;">💗</div>
+    <div class="heart-up" style="left: 65%; animation-delay: 12s;">💕</div>
+    <div class="heart-up" style="left: 75%; animation-delay: 14s;">💖</div>
+    <div class="heart-up" style="left: 85%; animation-delay: 1s;">💝</div>
+    <div class="heart-up" style="left: 95%; animation-delay: 3s;">💘</div>
+    
+    <!-- Hearts floating DOWN (10 hearts from top to bottom) -->
+    <div class="heart-down" style="left: 10%; animation-delay: 0s;">💕</div>
+    <div class="heart-down" style="left: 20%; animation-delay: 0s;">💖</div>
+    <div class="heart-down" style="left: 30%; animation-delay: 0s;">💗</div>
+    <div class="heart-down" style="left: 40%; animation-delay: 0s;">💝</div>
+    <div class="heart-down" style="left: 50%; animation-delay: 0s;">💘</div>
+    <div class="heart-down" style="left: 60%; animation-delay: 0s;">💕</div>
+    <div class="heart-down" style="left: 70%; animation-delay: 0s;">💖</div>
+    <div class="heart-down" style="left: 80%; animation-delay: 0s;">💗</div>
+    <div class="heart-down" style="left: 90%; animation-delay: 0s;">💝</div>
+    <div class="heart-down" style="left: 92%; animation-delay: 0s;">💘</div>
+    
+    <div class="container">
+        <h1>✨ Inner Mirror ✨</h1>
+
+        <p class="subtitle">~ a space for dreams & creativity ~</p>
+        
+        <div class="button-container">
+
+            <a href="diary.html" class="nav-button">
+                <span class="emoji">📔</span>
+                <span>Soul Scribbles</span>
+            </a>
+            <a href="mirror-muse.html" class="nav-button">
+                <span class="emoji">🎨</span>
+                <span>Mirror Muse</span>
+            
+            </a>
+                        <a href="twinkle-tracker.html" class="nav-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);">
+                <span class="emoji">⭐</span>
+                <span>Twinkle Tracker</span>
+            </a>
+
+        </div>
+    </div>
+</body>
+</html>
