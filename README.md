@@ -49,10 +49,10 @@ Inner Mirror transforms everyday digital interaction into a reflective experienc
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/inner-mirror.git
+   git clone https://github.com/lavanyanigam/Inner_Mirror.git
 2. Navigate to the project directory:
    ```bash
-   cd inner-mirror
+   cd Inner_Mirror
 3. open index.html in your preferred browser.
 
 ## Live Demo
